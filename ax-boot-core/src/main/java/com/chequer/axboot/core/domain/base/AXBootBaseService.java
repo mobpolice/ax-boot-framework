@@ -10,13 +10,13 @@ import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
@@ -52,11 +52,11 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
     }
 
     public List<T> findAll(Iterable<ID> iterable) {
-        return repository.findAll(iterable);
+        return repository.findAllById(iterable);
     }
 
     public T findOne(Predicate predicate) {
-        return repository.findOne(predicate);
+        return repository.findOne(predicate).orElse(null);
     }
 
     public List<T> findAll(Predicate predicate) {
@@ -155,11 +155,11 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
     }
 
     public T findOne(ID var1) {
-        return repository.findOne(var1);
+        return repository.findById(var1).orElse(null);
     }
 
     public boolean exists(ID var1) {
-        return repository.exists(var1);
+        return repository.existsById(var1);
     }
 
     public long count() {
@@ -168,7 +168,7 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
 
     @Transactional
     public void delete(ID var1) {
-        repository.delete(var1);
+        repository.deleteById(var1);
     }
 
     @Transactional
@@ -178,7 +178,7 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
 
     @Transactional
     public void delete(Iterable<? extends T> var1) {
-        repository.delete(var1);
+        repository.deleteAll(var1);
     }
 
     @Transactional
@@ -186,11 +186,19 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
         repository.deleteAll();
     }
 
-    @PersistenceContext
     protected EntityManager em;
 
-    @Inject
     protected JdbcTemplate jdbcTemplate;
+
+    @PersistenceContext
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
+    }
+
+    @Autowired(required = false)
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public int getInt(Integer integer) {
         if (integer == null) {

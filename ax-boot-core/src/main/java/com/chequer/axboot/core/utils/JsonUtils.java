@@ -84,7 +84,7 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T fromJsonToMap(String jsonStr) {
+    public static Map<String, Object> fromJsonToMap(String jsonStr) {
         try {
             return getMapper().readValue(jsonStr, new TypeReference<HashMap<String, Object>>() {
             });

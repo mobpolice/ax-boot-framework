@@ -3,16 +3,18 @@ package com.chequer.axboot.core.db.schema;
 import com.chequer.axboot.core.annotations.ColumnPosition;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.boot.spi.MetadataImplementor;
+import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
+import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.springframework.boot.orm.jpa.hibernate.SpringNamingStrategy;
+import org.hibernate.tool.schema.TargetType;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -21,19 +23,17 @@ import static java.util.stream.Collectors.toList;
 public class SchemaGenerator extends SchemaGeneratorBase {
 
     public void createSchema() throws IOException, ClassNotFoundException {
-        SchemaExport export = new SchemaExport((MetadataImplementor) getMetaData());
         String scriptOutputPath = System.getProperty("java.io.tmpdir") + "/schema.sql";
-        /*
-        SchemaExport schemaExport = new SchemaExport();
-        FileUtils.deleteQuietly(new File(scriptOutputPath));
-        EnumSet<TargetType> targetTypes = EnumSet.of(TargetType.SCRIPT);
-        schemaExport.setOutputFile(scriptOutputPath);
-        schemaExport.createOnly(targetTypes, getMetaData());
-        */
-        export.setOutputFile(scriptOutputPath);
-        export.create(true, true);
 
-        List<String> DDLs = IOUtils.readLines(new FileInputStream(scriptOutputPath), "UTF-8");
+        SchemaExport export = new SchemaExport();
+        export.setOutputFile(scriptOutputPath);
+        export.setDelimiter(";");
+        export.setFormat(false);
+
+        EnumSet<TargetType> targetTypes = EnumSet.of(TargetType.SCRIPT);
+        export.createOnly(targetTypes, getMetaData());
+
+        List<String> DDLs = IOUtils.readLines(Files.newInputStream(Paths.get(scriptOutputPath)), "UTF-8");
         List<String> convertedDDLs = new ArrayList<>();
 
         for (String DDL : DDLs) {
@@ -119,7 +119,10 @@ public class SchemaGenerator extends SchemaGeneratorBase {
             if (column != null && !"".equals(column.name())) {
                 columnName = column.name();
             } else {
-                columnName = new SpringNamingStrategy().columnName(name);
+                columnName = new CamelCaseToUnderscoresNamingStrategy()
+                        .toPhysicalColumnName(
+                                Identifier.toIdentifier(name), null
+                        ).getText();
             }
 
             if (columnPosition != null && columnPosition.value() > 0) {

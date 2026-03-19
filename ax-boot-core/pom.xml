@@ -4,7 +4,7 @@
     <artifactId>ax-boot-core</artifactId>
     <name>AX Boot Core</name>
     <description>AX Boot Core</description>
-    <version>2.1.38</version>
+    <version>2.1.38-imtsoft</version>
     <url>http://www.axboot.com</url>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
@@ -12,22 +12,9 @@
     <parent>
         <groupId>com.chequer.axboot</groupId>
         <artifactId>ax-boot-framework</artifactId>
-        <version>2.1.4</version>
+        <version>2.1.4-imtsoft</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-
-    <repositories>
-        <repository>
-            <id>in-project</id>
-            <name>In Project Repo</name>
-            <url>file://${project.basedir}/libs</url>
-            <releases>
-                <updatePolicy>always</updatePolicy>
-            </releases>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <!-- Spring -->
@@ -40,7 +27,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -318,6 +309,8 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
+            <version>3.0.19</version>
+            <type>pom</type>
         </dependency>
         <!-- Groovy -->
 
@@ -424,12 +417,6 @@
         </dependency>
 
     </dependencies>
-
-    <scm>
-        <url>https://github.com/axboot/ax-boot-framework.git</url>
-        <connection>scm:git:git://github.com/axboot/ax-boot-framework.git</connection>
-        <developerConnection>scm:git:git@github.com:axboot/ax-boot-framework.git</developerConnection>
-    </scm>
 
     <build>
         <plugins>

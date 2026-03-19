@@ -4,7 +4,6 @@ import com.chequer.axboot.core.json.Views;
 import com.chequer.axboot.core.vo.PageableVO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.wordnik.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -24,11 +23,9 @@ public class Responses {
         @JsonView(Views.Root.class)
         @JsonProperty("list")
         @NonNull
-        @ApiModelProperty(value = "목록", required = true)
         List<?> list;
 
         @NonNull
-        @ApiModelProperty(value = "페이징 정보", required = true)
         @JsonView(Views.Root.class)
         PageableVO page = PageableVO.of(0, 0L, 0, 0);
     }
@@ -39,7 +36,6 @@ public class Responses {
     public static class MapResponse {
 
         @NonNull
-        @ApiModelProperty(value = "Map", required = true)
         @JsonProperty("map")
         @JsonView(Views.Root.class)
         Map<String, Object> map;
