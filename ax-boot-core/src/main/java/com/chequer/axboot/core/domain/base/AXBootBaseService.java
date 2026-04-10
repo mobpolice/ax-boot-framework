@@ -154,6 +154,18 @@ public abstract class AXBootBaseService<T, ID extends Serializable> extends AXBo
         return vars;
     }
 
+    @Transactional
+    public <S extends T> S insert(S var) {
+        em.persist(var);
+        return var;
+    }
+
+    @Transactional
+    public <S extends T> Collection<S> insert(Collection<S> vars) {
+        vars.forEach(this::insert);
+        return vars;
+    }
+
     public T findOne(ID var1) {
         return repository.findById(var1).orElse(null);
     }
